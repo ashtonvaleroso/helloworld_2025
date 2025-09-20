@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helloworld_2025/frontend/home_page/calendar_page_model.dart';
+import 'package:helloworld_2025/frontend/home_page/calendar_page.dart';
 import 'package:helloworld_2025/global/main_initializations.dart';
 
 Future<void> main() async {
@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       home: const CalendarPage(title: 'Flutter Demo Home Page'),
     );
   }
