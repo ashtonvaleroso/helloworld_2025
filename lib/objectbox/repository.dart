@@ -1,4 +1,4 @@
-import 'package:helloworld_2025/event.dart';
+import 'package:helloworld_2025/objectbox/event.dart';
 import 'package:objectbox/objectbox.dart';
 
 // run "flutter pub run build_runner build" to reconfigure data

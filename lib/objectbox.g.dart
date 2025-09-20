@@ -12,8 +12,10 @@ import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:objectbox/internal.dart'
     as obx_int; // generated code can access "internal" functionality
 import 'package:objectbox/objectbox.dart' as obx;
+import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'event.dart';
+import 'objectbox/event.dart';
+import 'task.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -56,6 +58,35 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(2, 3039803589815677289),
+      name: 'Task',
+      lastPropertyId: const obx_int.IdUid(4, 6549202447965614986),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 3926476058949071154),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 3911917288605708940),
+            name: 'title',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 8779504783794744168),
+            name: 'duration',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 6549202447965614986),
+            name: 'colorValue',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -70,16 +101,17 @@ final _entities = <obx_int.ModelEntity>[
 /// For Flutter apps, also calls `loadObjectBoxLibraryAndroidCompat()` from
 /// the ObjectBox Flutter library to fix loading the native ObjectBox library
 /// on Android 6 and older.
-obx.Store openStore(
+Future<obx.Store> openStore(
     {String? directory,
     int? maxDBSizeInKB,
     int? maxDataSizeInKB,
     int? fileMode,
     int? maxReaders,
     bool queriesCaseSensitiveDefault = true,
-    String? macosApplicationGroup}) {
+    String? macosApplicationGroup}) async {
+  await loadObjectBoxLibraryAndroidCompat();
   return obx.Store(getObjectBoxModel(),
-      directory: directory,
+      directory: directory ?? (await defaultStoreDirectory()).path,
       maxDBSizeInKB: maxDBSizeInKB,
       maxDataSizeInKB: maxDataSizeInKB,
       fileMode: fileMode,
@@ -93,7 +125,7 @@ obx.Store openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 1684076486688986286),
+      lastEntityId: const obx_int.IdUid(2, 3039803589815677289),
       lastIndexId: const obx_int.IdUid(0, 0),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
@@ -150,6 +182,43 @@ obx_int.ModelDefinition getObjectBoxModel() {
               isAllDay: isAllDayParam);
 
           return object;
+        }),
+    Task: obx_int.EntityDefinition<Task>(
+        model: _entities[1],
+        toOneRelations: (Task object) => [],
+        toManyRelations: (Task object) => {},
+        getId: (Task object) => object.id,
+        setId: (Task object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Task object, fb.Builder fbb) {
+          final titleOffset = fbb.writeString(object.title);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, titleOffset);
+          fbb.addInt64(2, object.duration);
+          fbb.addInt64(3, object.colorValue);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final titleParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final durationParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          final colorValueParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final object = Task(
+              id: idParam,
+              title: titleParam,
+              duration: durationParam,
+              colorValue: colorValueParam);
+
+          return object;
         })
   };
 
@@ -180,4 +249,22 @@ class Event_ {
   /// See [Event.isAllDay].
   static final isAllDay =
       obx.QueryBooleanProperty<Event>(_entities[0].properties[5]);
+}
+
+/// [Task] entity fields to define ObjectBox queries.
+class Task_ {
+  /// See [Task.id].
+  static final id = obx.QueryIntegerProperty<Task>(_entities[1].properties[0]);
+
+  /// See [Task.title].
+  static final title =
+      obx.QueryStringProperty<Task>(_entities[1].properties[1]);
+
+  /// See [Task.duration].
+  static final duration =
+      obx.QueryIntegerProperty<Task>(_entities[1].properties[2]);
+
+  /// See [Task.colorValue].
+  static final colorValue =
+      obx.QueryIntegerProperty<Task>(_entities[1].properties[3]);
 }

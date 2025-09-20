@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:helloworld_2025/event.dart';
+import 'package:helloworld_2025/objectbox/event.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class EventDataSource extends CalendarDataSource {

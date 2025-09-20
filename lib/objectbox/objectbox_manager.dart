@@ -15,11 +15,9 @@ class ObjectBoxManager {
 
     try {
       if (Store.isOpen(storePath)) {
-        print('Store already open');
         _store = Store.attach(getObjectBoxModel(), storePath);
       } else {
-        print('Opening new store at $storePath');
-        _store = openStore(directory: storePath);
+        _store = await openStore(directory: storePath);
       }
     } catch (e) {
       debugPrint("Error opening store at $storePath: $e");

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:helloworld_2025/global_variables.dart';
+import 'package:helloworld_2025/global/global_variables.dart';
 import 'package:helloworld_2025/objectbox/objectbox_manager.dart';
 import 'package:helloworld_2025/objectbox/repository.dart';
 
