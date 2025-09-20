@@ -1,7 +1,6 @@
-import 'dart:ui';
-
-import 'package:helloworld_2025/objectbox/event.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:flutter/material.dart';
+import 'package:helloworld_2025/objectbox/event.dart';
 
 class EventDataSource extends CalendarDataSource {
   EventDataSource(List<Event> source) {
@@ -9,17 +8,44 @@ class EventDataSource extends CalendarDataSource {
   }
 
   @override
-  DateTime getStartTime(int index) => appointments![index].startTime;
+  DateTime getStartTime(int index) {
+    return appointments![index].startTime;
+  }
 
   @override
-  DateTime getEndTime(int index) => appointments![index].endTime;
+  DateTime getEndTime(int index) {
+    return appointments![index].endTime;
+  }
 
   @override
-  String getSubject(int index) => appointments![index].title;
+  String getSubject(int index) {
+    return appointments![index].title;
+  }
 
   @override
-  Color getColor(int index) => appointments![index].color;
+  Color getColor(int index) {
+    return appointments![index].color;
+  }
 
   @override
-  bool isAllDay(int index) => appointments![index].isAllDay;
+  bool isAllDay(int index) {
+    return appointments![index].isAllDay;
+  }
+
+  /// 👇 Needed for drag-and-drop & editing
+  @override
+  Object? convertAppointmentToObject(
+      Object? customData, Appointment appointment) {
+    if (customData is Event) {
+      return Event(
+        id: customData.id,
+        title: appointment.subject,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        colorValue: appointment.color.value,
+        isAllDay: appointment.isAllDay,
+      );
+    }
+    return null;
+  }
 }

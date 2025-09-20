@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:helloworld_2025/global/global_variables.dart';
 import 'package:helloworld_2025/objectbox/event.dart';
+import 'package:helloworld_2025/global/global_variables.dart';
 
 class EventPageModel extends ChangeNotifier {
   final Event? event;
   EventPageModel(this.event) {
-    titleController.text = event?.title ?? '';
+    if (event != null) {
+      titleController.text = event!.title;
+      startTime = event!.startTime;
+      endTime = event!.endTime;
+      color = parseColor(event!.colorValue);
+      isAllDay = event!.isAllDay;
+    }
   }
 
   TextEditingController titleController = TextEditingController();
@@ -15,13 +21,40 @@ class EventPageModel extends ChangeNotifier {
   bool isAllDay = false;
 
   void setStartTime(DateTime value) {
+    // Check if start and end were on the same date
+    bool sameDate = startTime.year == endTime.year &&
+        startTime.month == endTime.month &&
+        startTime.day == endTime.day;
+
     startTime = value;
+
+    // If they were on the same day, adjust endTime to match new start date
+    if (sameDate) {
+      endTime = DateTime(
+        value.year,
+        value.month,
+        value.day,
+        endTime.hour,
+        endTime.minute,
+      );
+
+      // Ensure endTime is not before startTime
+      if (endTime.isBefore(startTime)) {
+        endTime = startTime.add(const Duration(hours: 1));
+      }
+    } else if (endTime.isBefore(startTime)) {
+      // If dates were different, just make sure endTime is after startTime
+      endTime = startTime.add(const Duration(hours: 1));
+    }
+
     notifyListeners();
   }
 
   void setEndTime(DateTime value) {
-    endTime = value;
-    notifyListeners();
+    if (value.isAfter(startTime)) {
+      endTime = value;
+      notifyListeners();
+    }
   }
 
   void setColor(Color value) {
@@ -37,7 +70,8 @@ class EventPageModel extends ChangeNotifier {
   void saveEvent(BuildContext context) {
     if (titleController.text.isEmpty) return;
 
-    final event = Event(
+    final newEvent = Event(
+      id: event?.id ?? 0,
       title: titleController.text,
       startTime: startTime,
       endTime: endTime,
@@ -45,11 +79,18 @@ class EventPageModel extends ChangeNotifier {
       isAllDay: isAllDay,
     );
 
-    repository.insertEvent(event);
+    repository.insertEvent(newEvent);
     Navigator.pop(context);
   }
 
-  Future<void> pickStartDateTime(BuildContext context) async {
+  void deleteEvent(BuildContext context) {
+    if (event != null) {
+      repository.deleteEvent(event!.id);
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> pickStartDate(BuildContext context) async {
     final date = await showDatePicker(
       context: context,
       initialDate: startTime,
@@ -57,18 +98,23 @@ class EventPageModel extends ChangeNotifier {
       lastDate: DateTime(2100),
     );
     if (date != null) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(startTime),
-      );
-      if (time != null) {
-        setStartTime(
-            DateTime(date.year, date.month, date.day, time.hour, time.minute));
-      }
+      setStartTime(DateTime(
+          date.year, date.month, date.day, startTime.hour, startTime.minute));
     }
   }
 
-  Future<void> pickEndDateTime(BuildContext context) async {
+  Future<void> pickStartTime(BuildContext context) async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(startTime),
+    );
+    if (time != null) {
+      setStartTime(DateTime(startTime.year, startTime.month, startTime.day,
+          time.hour, time.minute));
+    }
+  }
+
+  Future<void> pickEndDate(BuildContext context) async {
     final date = await showDatePicker(
       context: context,
       initialDate: endTime,
@@ -76,14 +122,19 @@ class EventPageModel extends ChangeNotifier {
       lastDate: DateTime(2100),
     );
     if (date != null) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(endTime),
-      );
-      if (time != null) {
-        setEndTime(
-            DateTime(date.year, date.month, date.day, time.hour, time.minute));
-      }
+      setEndTime(DateTime(
+          date.year, date.month, date.day, endTime.hour, endTime.minute));
+    }
+  }
+
+  Future<void> pickEndTime(BuildContext context) async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(endTime),
+    );
+    if (time != null) {
+      setEndTime(DateTime(
+          endTime.year, endTime.month, endTime.day, time.hour, time.minute));
     }
   }
 
@@ -110,4 +161,6 @@ class EventPageModel extends ChangeNotifier {
     );
     if (newColor != null) setColor(newColor);
   }
+
+  Color parseColor(int value) => Color(value);
 }
