@@ -17,7 +17,7 @@ class TaskDialogModel extends ChangeNotifier {
   TaskDialogModel({this.task})
       : nameController = TextEditingController(text: task?.name ?? ''),
         estimatedTimeController =
-            TextEditingController(text: task?.estimatedTime.toString() ?? ''),
+            TextEditingController(text: task?.estimatedTime.toString() ?? '1'),
         priorityController =
             TextEditingController(text: task?.priority.toString() ?? '2'),
         startDate = task?.startDate ?? DateTime.now(),
@@ -71,15 +71,18 @@ class TaskDialogModel extends ChangeNotifier {
 
 /// Stateless dialog purely for UI
 class TaskDialog extends StatelessWidget {
-  const TaskDialog({super.key});
+  final Task? task;
+  const TaskDialog({super.key, this.task});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => TaskDialogModel(),
+      create: (context) => TaskDialogModel(
+        task: task,
+      ),
       builder: (context, child) {
         final model = Provider.of<TaskDialogModel>(context);
-        final isEditing = model.task != null;
+        final isEditing = task != null;
 
         Future<void> pickDate({required bool isStart}) async {
           final picked = await showDatePicker(

@@ -32,6 +32,11 @@ class EventDataSource extends CalendarDataSource {
     return appointments![index].isAllDay;
   }
 
+  void updateEvents(List<Event> newEvents) {
+    appointments = newEvents;
+    notifyListeners(CalendarDataSourceAction.reset, newEvents);
+  }
+
   /// 👇 Needed for drag-and-drop & editing
   @override
   Object? convertAppointmentToObject(

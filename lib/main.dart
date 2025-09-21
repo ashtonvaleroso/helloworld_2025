@@ -5,7 +5,7 @@ import 'package:helloworld_2025/global/global_functions.dart';
 import 'package:helloworld_2025/global/main_initializations.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
-/// Brand Colors for Flexender
+/// Brand Colors for Flexendar
 class AppColors {
   static const primary = Color(0xFF6C63FF); // Indigo-Violet
   static const secondary = Color(0xFF00C896); // Mint Green

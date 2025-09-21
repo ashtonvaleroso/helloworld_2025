@@ -11,8 +11,26 @@ import 'package:multi_split_view/multi_split_view.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class CalendarPage extends StatelessWidget {
+class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
+
+  @override
+  State<CalendarPage> createState() => _CalendarPageState();
+}
+
+class _CalendarPageState extends State<CalendarPage> {
+  late EventDataSource _dataSource;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataSource = EventDataSource(repository.getEvents());
+
+    // Listen to ObjectBox stream and update datasource
+    repository.streamEvents().listen((events) {
+      _dataSource.updateEvents(events);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,112 +40,67 @@ class CalendarPage extends StatelessWidget {
         final readModel = context.read<CalendarPageModel>();
         final watchModel = context.watch<CalendarPageModel>();
 
-        return StreamBuilder<List<Event>>(
-          stream: repository.streamEvents(),
-          builder: (context, snapshot) {
-            final events = snapshot.data ?? repository.getEvents();
-
-            return Scaffold(
-              appBar: _buildAppBar(context, readModel, watchModel),
-              body: MultiSplitViewTheme(
-                data: MultiSplitViewThemeData(
-                  dividerThickness: 20,
-                ),
-                child: MultiSplitView(
-                  axis: Axis.vertical,
-                  resizable: true,
-                  dividerBuilder: (axis, index, resizable, dragging,
-                      highlighted, themeData) {
-                    return MouseRegion(
-                      cursor: SystemMouseCursors.resizeRow,
+        return Scaffold(
+          appBar: _buildAppBar(context, readModel, watchModel),
+          body: MultiSplitViewTheme(
+            data: MultiSplitViewThemeData(
+              dividerThickness: 20,
+            ),
+            child: MultiSplitView(
+              axis: Axis.vertical,
+              resizable: true,
+              dividerBuilder:
+                  (axis, index, resizable, dragging, highlighted, themeData) {
+                return MouseRegion(
+                  cursor: SystemMouseCursors.resizeRow,
+                  child: Container(
+                    color: Colors.grey.shade500,
+                    child: Center(
                       child: Container(
-                        color:
-                            Colors.grey.shade500, // make outer area invisible
-                        child: Center(
-                          child: Container(
-                            width: 100,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: dragging
-                                  ? Colors.blueAccent
-                                  : highlighted
-                                      ? Colors.blueGrey
-                                      : Colors.grey[600],
-                              borderRadius:
-                                  BorderRadius.circular(2), // rounded edges
-                            ),
-                          ),
+                        width: 100,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: dragging
+                              ? Colors.blueAccent
+                              : highlighted
+                                  ? Colors.blueGrey
+                                  : Colors.grey[600],
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                    );
-                  },
-                  initialAreas: [
-                    Area(
-                      flex: 2,
-                      min: 1.2,
-                      builder: (context, area) => _buildCalendarArea(
-                          context, events, watchModel, readModel),
                     ),
-                    Area(
-                      flex: 1,
-                      min: 0.25,
-                      builder: (context, area) => TaskList(),
-                    ),
-                  ],
+                  ),
+                );
+              },
+              initialAreas: [
+                Area(
+                  flex: 2,
+                  min: 1.2,
+                  builder: (context, area) =>
+                      _buildCalendarArea(context, watchModel, readModel),
                 ),
-              ),
-            );
-          },
+                Area(
+                  flex: 1,
+                  min: 0.25,
+                  builder: (context, area) => TaskList(),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, CalendarPageModel readModel,
-      CalendarPageModel watchModel) {
-    return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      title: Text(
-        'Flexender',
-        style: GoogleFonts.inter(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      actions: [
-        IconButton(
-          tooltip: "Jump to Today",
-          icon: const Icon(Icons.today, color: Colors.white),
-          onPressed: () {
-            readModel.calendarController.displayDate = DateTime.now();
-          },
-        ),
-        PopupMenuButton<CalendarView>(
-          icon: Icon(watchModel.iconData, color: Colors.white),
-          onSelected: (view) {
-            readModel.calendarController.view = view;
-          },
-          itemBuilder: (context) => const [
-            PopupMenuItem(
-                value: CalendarView.schedule, child: Text('Schedule')),
-            PopupMenuItem(value: CalendarView.day, child: Text('Daily')),
-            PopupMenuItem(value: CalendarView.week, child: Text('Weekly')),
-            PopupMenuItem(value: CalendarView.month, child: Text('Monthly')),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCalendarArea(BuildContext context, List<Event> events,
-      CalendarPageModel watchModel, CalendarPageModel readModel) {
+  Widget _buildCalendarArea(BuildContext context, CalendarPageModel watchModel,
+      CalendarPageModel readModel) {
     return Scaffold(
       body: SfCalendar(
         showDatePickerButton: true,
         cellBorderColor: Colors.grey,
         controller: watchModel.calendarController,
         view: watchModel.calendarView,
-        dataSource: EventDataSource(events),
+        dataSource: _dataSource, // ✅ persistent datasource
         allowDragAndDrop: true,
         dragAndDropSettings: const DragAndDropSettings(
           showTimeIndicator: true,
@@ -170,6 +143,47 @@ class CalendarPage extends StatelessWidget {
         ),
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context, CalendarPageModel readModel,
+      CalendarPageModel watchModel) {
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      title: Text(
+        'Flexendar',
+        style: GoogleFonts.inter(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      actions: [
+        ElevatedButton(
+            onPressed: () {
+              print(repository.getEvents());
+            },
+            child: Text('test')),
+        IconButton(
+          tooltip: "Jump to Today",
+          icon: const Icon(Icons.today, color: Colors.white),
+          onPressed: () {
+            readModel.calendarController.displayDate = DateTime.now();
+          },
+        ),
+        PopupMenuButton<CalendarView>(
+          icon: Icon(watchModel.iconData, color: Colors.white),
+          onSelected: (view) {
+            readModel.calendarController.view = view;
+          },
+          itemBuilder: (context) => const [
+            PopupMenuItem(
+                value: CalendarView.schedule, child: Text('Schedule')),
+            PopupMenuItem(value: CalendarView.day, child: Text('Daily')),
+            PopupMenuItem(value: CalendarView.week, child: Text('Weekly')),
+            PopupMenuItem(value: CalendarView.month, child: Text('Monthly')),
+          ],
+        ),
+      ],
     );
   }
 }

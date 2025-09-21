@@ -9,74 +9,59 @@ class NewItemModalsheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.maxFinite,
       margin: EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              iconColor: Colors.white,
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              DialogRoute(
-                context: context,
-                builder: (context) => TaskDialog(),
+          SizedBox(
+            width: double.maxFinite,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                iconColor: Colors.white,
               ),
-            ),
-            label: Text(
-              'New Task',
-              style: GoogleFonts.inter(
-                fontSize: 20,
+              onPressed: () => Navigator.push(
+                context,
+                DialogRoute(
+                  context: context,
+                  builder: (context) => TaskDialog(),
+                ),
               ),
-            ),
-            icon: Icon(Icons.task),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              iconColor: Colors.white,
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EventPage(),
+              label: Text(
+                'New Task',
+                style: GoogleFonts.inter(
+                  fontSize: 20,
+                ),
               ),
-            ),
-            label: Text(
-              'New Event',
-              style: GoogleFonts.inter(
-                fontSize: 20,
-              ),
-            ),
-            icon: Icon(
-              Icons.event,
-              color: Colors.white,
+              icon: Icon(Icons.task),
             ),
           ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EventPage(),
+          SizedBox(
+            width: double.maxFinite,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                iconColor: Colors.white,
               ),
-            ),
-            label: Text(
-              'Schedule Tasks',
-              style: GoogleFonts.inter(
-                fontSize: 20,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EventPage(),
+                ),
               ),
-            ),
-            icon: Icon(
-              Icons.schedule,
-              color: Colors.white,
+              label: Text(
+                'New Event',
+                style: GoogleFonts.inter(
+                  fontSize: 20,
+                ),
+              ),
+              icon: Icon(
+                Icons.event,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
