@@ -33,13 +33,6 @@ class TaskSchedulerDialog extends StatelessWidget {
                     onPressed: () => context
                         .read<TaskSchedulerModel>()
                         .scheduleAllAfterNow(context),
-                    child: const Text("Today"),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () => context
-                        .read<TaskSchedulerModel>()
-                        .scheduleAllAfterNow(context),
                     child: const Text("This Week"),
                   ),
                 ],

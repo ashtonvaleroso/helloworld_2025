@@ -54,18 +54,18 @@ Future<void> generateAndSaveWeeklySchedule() async {
   ];
 
   double totalTaskHours = 20;
+
   for (int i = 0; i < taskNames.length; i++) {
     double remainingTasks = taskNames.length.toDouble() - i;
-    double maxHours = (totalTaskHours / remainingTasks).ceilToDouble();
-    double estimated =
-        (random.nextDouble() * maxHours).clamp(1, totalTaskHours);
+    double maxHours = min(2, totalTaskHours); // max 2 hours per task
+    double minHours = 0.25; // min 0.25 hours per task
 
-    // Round to nearest 0.25
+    // Generate random duration between 0.25 and min(2, totalTaskHours)
+    double estimated = minHours + random.nextDouble() * (maxHours - minHours);
     estimated = roundToQuarter(estimated);
 
-    // Ensure we don’t go over totalTaskHours
+    // Ensure we don't exceed remaining total hours
     estimated = min(estimated, totalTaskHours);
-
     totalTaskHours -= estimated;
 
     final task = Task(
