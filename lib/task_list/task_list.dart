@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:helloworld_2025/backend/user.dart';
 import 'package:helloworld_2025/frontend/dialogs/task_dialog.dart';
+import 'package:helloworld_2025/frontend/dialogs/task_scheduler_dialog/task_scheduler_dialog.dart';
+import 'package:helloworld_2025/frontend/dialogs/task_scheduler_dialog/task_scheduler_dialog_model.dart';
 import 'package:helloworld_2025/global/global_variables.dart';
+import 'package:helloworld_2025/objectbox/event.dart';
 import 'package:intl/intl.dart';
 
 class TaskList extends StatelessWidget {
@@ -22,16 +26,32 @@ class TaskList extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    'Tasks',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  child: InkWell(
+                    onTap: () {
+                      // TaskSchedulerModel.scheduleTasks(
+                      //     user: User.defaultUser,
+                      //     events: repository.getEvents(),
+                      //     tasks: repository.getTasks(),
+                      //     start: DateTime.now(),
+                      //     end: DateTime.now().add(Duration(days: 7)));
+                    },
+                    child: Text(
+                      'Tasks',
+                      style: GoogleFonts.inter(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () => Navigator.push(
+                    context,
+                    DialogRoute(
+                      context: context,
+                      builder: (context) => TaskSchedulerDialog(),
+                    ),
+                  ),
                   label: Text('Schedule Tasks'),
                   icon: Icon(Icons.schedule),
                 ),

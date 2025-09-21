@@ -10,6 +10,7 @@ class Event {
   DateTime endTime;
   int colorValue;
   bool isAllDay;
+  bool isFixed;
 
   Event({
     this.id = 0,
@@ -18,6 +19,7 @@ class Event {
     required this.endTime,
     required this.colorValue,
     this.isAllDay = false,
+    this.isFixed = true,
   });
 
   Color get color => Color(colorValue);

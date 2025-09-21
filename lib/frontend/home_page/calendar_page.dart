@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helloworld_2025/backend/event_data_source.dart';
+import 'package:helloworld_2025/backend/user.dart';
 import 'package:helloworld_2025/frontend/components/new_item_modalsheet.dart';
 import 'package:helloworld_2025/frontend/home_page/calendar_page_model.dart';
 import 'package:helloworld_2025/frontend/event_page/event_page.dart';
+import 'package:helloworld_2025/global/global_functions.dart';
 import 'package:helloworld_2025/global/global_variables.dart';
 import 'package:helloworld_2025/objectbox/event.dart';
 import 'package:helloworld_2025/task_list/task_list.dart';
@@ -42,6 +44,16 @@ class _CalendarPageState extends State<CalendarPage> {
 
         return Scaffold(
           appBar: _buildAppBar(context, readModel, watchModel),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Navigator.push(
+              context,
+              ModalBottomSheetRoute(
+                builder: (_) => const NewItemModalsheet(),
+                isScrollControlled: true,
+              ),
+            ),
+            child: const Icon(Icons.add),
+          ),
           body: MultiSplitViewTheme(
             data: MultiSplitViewThemeData(
               dividerThickness: 20,
@@ -113,6 +125,21 @@ class _CalendarPageState extends State<CalendarPage> {
               context,
               MaterialPageRoute(builder: (_) => EventPage(event: event)),
             );
+          } else if (details.date != null) {
+            final event = Event(
+              title: 'Untitled Event',
+              colorValue: Colors.blue.value,
+              startTime: details.date!,
+              endTime: details.date!.add(const Duration(hours: 1)),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => EventPage(
+                        isNew: true,
+                        event: event,
+                      )),
+            );
           }
         },
         onDragEnd: (details) {
@@ -133,16 +160,6 @@ class _CalendarPageState extends State<CalendarPage> {
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          ModalBottomSheetRoute(
-            builder: (_) => const NewItemModalsheet(),
-            isScrollControlled: true,
-          ),
-        ),
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
@@ -150,19 +167,21 @@ class _CalendarPageState extends State<CalendarPage> {
       CalendarPageModel watchModel) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      title: Text(
-        'Flexendar',
-        style: GoogleFonts.inter(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+      title: InkWell(
+        onLongPress: () {
+          repository.deleteAllEvents();
+          repository.deleteAllTasks();
+          generateAndSaveWeeklySchedule();
+        },
+        child: Text(
+          'Flexendar',
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
       actions: [
-        ElevatedButton(
-            onPressed: () {
-              print(repository.getEvents());
-            },
-            child: Text('test')),
         IconButton(
           tooltip: "Jump to Today",
           icon: const Icon(Icons.today, color: Colors.white),

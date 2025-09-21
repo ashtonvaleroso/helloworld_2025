@@ -1,11 +1,17 @@
 class User {
   String name;
-  String email;
-  final (int, int) workingHours; // (startHour, endHour)
+  int workingHoursStart;
+  int workingHoursEnd;
 
   User({
     required this.name,
-    required this.email,
-    this.workingHours = (9, 17),
+    this.workingHoursStart = 9,
+    this.workingHoursEnd = 17,
   });
+
+  static User get defaultUser => User(
+        name: "Default User",
+        workingHoursStart: 9,
+        workingHoursEnd: 17,
+      );
 }

@@ -4,9 +4,13 @@ import 'package:helloworld_2025/global/global_variables.dart';
 
 class EventPageModel extends ChangeNotifier {
   final Event? event;
-  EventPageModel(this.event) {
+  final bool isNew;
+  EventPageModel({
+    required this.event,
+    required this.isNew,
+  }) {
     if (event != null) {
-      titleController.text = event!.title;
+      titleController.text = isNew ? '' : event!.title;
       startTime = event!.startTime;
       endTime = event!.endTime;
       color = parseColor(event!.colorValue);

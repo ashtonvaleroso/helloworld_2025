@@ -23,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 1684076486688986286),
       name: 'Event',
-      lastPropertyId: const obx_int.IdUid(6, 1129258756316173917),
+      lastPropertyId: const obx_int.IdUid(8, 5348839037868653200),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -55,6 +55,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(6, 1129258756316173917),
             name: 'isAllDay',
             type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 5348839037868653200),
+            name: 'isFixed',
+            type: 1,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -62,7 +67,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 2982125569205477989),
       name: 'Task',
-      lastPropertyId: const obx_int.IdUid(6, 8067665372735761391),
+      lastPropertyId: const obx_int.IdUid(7, 5381287377534538503),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -94,6 +99,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(6, 8067665372735761391),
             name: 'priority',
             type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 5381287377534538503),
+            name: 'flexible',
+            type: 1,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -145,7 +155,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         3926476058949071154,
         3911917288605708940,
         8779504783794744168,
-        6549202447965614986
+        6549202447965614986,
+        6812928977167934969
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -163,13 +174,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Event object, fb.Builder fbb) {
           final titleOffset = fbb.writeString(object.title);
-          fbb.startTable(7);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
           fbb.addInt64(2, object.startTime.millisecondsSinceEpoch);
           fbb.addInt64(3, object.endTime.millisecondsSinceEpoch);
           fbb.addInt64(4, object.colorValue);
           fbb.addBool(5, object.isAllDay);
+          fbb.addBool(7, object.isFixed);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -188,13 +200,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
           final isAllDayParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
+          final isFixedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 18, false);
           final object = Event(
               id: idParam,
               title: titleParam,
               startTime: startTimeParam,
               endTime: endTimeParam,
               colorValue: colorValueParam,
-              isAllDay: isAllDayParam);
+              isAllDay: isAllDayParam,
+              isFixed: isFixedParam);
 
           return object;
         }),
@@ -208,13 +223,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Task object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
-          fbb.startTable(7);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addFloat64(2, object.estimatedTime);
           fbb.addInt64(3, object.dueDate.millisecondsSinceEpoch);
           fbb.addInt64(4, object.startDate.millisecondsSinceEpoch);
           fbb.addInt64(5, object.priority);
+          fbb.addBool(6, object.flexible);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -233,13 +249,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0));
           final priorityParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final flexibleParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 16, false);
           final object = Task(
               id: idParam,
               name: nameParam,
               estimatedTime: estimatedTimeParam,
               dueDate: dueDateParam,
               startDate: startDateParam,
-              priority: priorityParam);
+              priority: priorityParam,
+              flexible: flexibleParam);
 
           return object;
         })
@@ -272,6 +291,10 @@ class Event_ {
   /// See [Event.isAllDay].
   static final isAllDay =
       obx.QueryBooleanProperty<Event>(_entities[0].properties[5]);
+
+  /// See [Event.isFixed].
+  static final isFixed =
+      obx.QueryBooleanProperty<Event>(_entities[0].properties[6]);
 }
 
 /// [Task] entity fields to define ObjectBox queries.
@@ -297,4 +320,8 @@ class Task_ {
   /// See [Task.priority].
   static final priority =
       obx.QueryIntegerProperty<Task>(_entities[1].properties[5]);
+
+  /// See [Task.flexible].
+  static final flexible =
+      obx.QueryBooleanProperty<Task>(_entities[1].properties[6]);
 }

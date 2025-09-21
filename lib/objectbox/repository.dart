@@ -19,6 +19,8 @@ class Repository {
 
   bool deleteEvent(int id) => _eventBox.remove(id);
 
+  void deleteAllEvents() => _eventBox.removeAll();
+
   Stream<List<Event>> streamEvents() => _eventBox
       .query()
       .watch(triggerImmediately: true)
@@ -29,6 +31,8 @@ class Repository {
   int insertTask(Task task) => _taskBox.put(task);
 
   bool deleteTask(int id) => _taskBox.remove(id);
+
+  void deleteAllTasks() => _taskBox.removeAll();
 
   Stream<List<Task>> streamTasks() => _taskBox
       .query()

@@ -9,6 +9,7 @@ class Task {
   DateTime dueDate;
   DateTime startDate;
   int priority; // 1 = highest, 3 = lowest
+  bool flexible;
 
   Task({
     this.id = 0,
@@ -17,6 +18,7 @@ class Task {
     required this.dueDate,
     required this.startDate,
     required this.priority,
+    this.flexible = true,
   });
 
   @override

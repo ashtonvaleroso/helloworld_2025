@@ -2,23 +2,29 @@ import 'package:helloworld_2025/objectbox/task.dart';
 
 class WorkBlock {
   DateTime startTime;
-  double duration; // hours
-  late DateTime endTime;
+  DateTime endTime;
   List<Task> tasks = [];
-  double remainingTime;
 
   WorkBlock({
     required this.startTime,
-    this.duration = 2.0,
-  })  : remainingTime = duration,
-        endTime = startTime.add(Duration(
-          minutes: (duration * 60).round(),
-        ));
+    required this.endTime,
+    this.tasks = const [],
+  });
 
+  /// Returns remaining time in hours
+  double get remainingTime {
+    final usedMinutes = tasks.fold<int>(
+      0,
+      (sum, t) => sum + (t.estimatedTime * 60).toInt(),
+    );
+    final totalMinutes = endTime.difference(startTime).inMinutes;
+    return (totalMinutes - usedMinutes) / 60.0;
+  }
+
+  /// Try to add a task if it fits into the remaining time
   bool addTask(Task task) {
     if (task.estimatedTime <= remainingTime) {
       tasks.add(task);
-      remainingTime -= task.estimatedTime;
       return true;
     }
     return false;
@@ -27,6 +33,6 @@ class WorkBlock {
   @override
   String toString() {
     final taskNames = tasks.map((t) => t.name).join(", ");
-    return "WorkBlock(${startTime.toIso8601String()}, tasks=[$taskNames])";
+    return "WorkBlock(${startTime.toIso8601String()} - ${endTime.toIso8601String()}, tasks=[$taskNames], remainingHours=${remainingTime.toStringAsFixed(2)})";
   }
 }

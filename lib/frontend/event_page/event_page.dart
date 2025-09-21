@@ -5,8 +5,13 @@ import 'event_page_model.dart';
 import 'package:intl/intl.dart';
 
 class EventPage extends StatelessWidget {
+  final bool isNew;
   final Event? event;
-  const EventPage({super.key, this.event});
+  const EventPage({
+    super.key,
+    this.isNew = false,
+    this.event,
+  });
 
   String formatDate(DateTime dateTime) {
     return DateFormat('MMM d, yyyy').format(dateTime);
@@ -72,7 +77,10 @@ class EventPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => EventPageModel(event),
+      create: (context) => EventPageModel(
+        isNew: isNew,
+        event: event,
+      ),
       child: Consumer<EventPageModel>(
         builder: (context, model, _) {
           return Scaffold(
