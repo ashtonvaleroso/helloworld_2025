@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helloworld_2025/backend/event_data_source.dart';
+import 'package:helloworld_2025/frontend/components/new_item_modalsheet.dart';
 import 'package:helloworld_2025/frontend/home_page/calendar_page_model.dart';
 import 'package:helloworld_2025/frontend/event_page/event_page.dart';
 import 'package:helloworld_2025/global/global_variables.dart';
@@ -115,11 +116,10 @@ class CalendarPage extends StatelessWidget {
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EventPage(),
-                  ),
-                ),
+                    context,
+                    ModalBottomSheetRoute(
+                        builder: (context) => const NewItemModalsheet(),
+                        isScrollControlled: true)),
                 child: const Icon(Icons.add),
               ),
             );
