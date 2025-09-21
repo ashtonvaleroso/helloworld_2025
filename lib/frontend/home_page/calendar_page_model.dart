@@ -9,7 +9,7 @@ class CalendarPageModel extends ChangeNotifier {
   final CalendarController calendarController = CalendarController();
   CalendarPageModel(this.repository);
 
-  CalendarView calendarView = CalendarView.week;
+  CalendarView calendarView = CalendarView.day;
 
   IconData get iconData {
     switch (calendarView) {
